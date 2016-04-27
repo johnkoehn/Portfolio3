@@ -11,11 +11,25 @@
 	<input type = 'button' id = 'red' value = '1:2'>
 	<input type = 'button' id = 'green' value = '1:14'>
 	<input type = 'button' id = 'black' value = '1:2'>
+	</br>
 	
-	<div id = 'bets'>
-		<p style = 'float: left;'>{{Red Bets}}</p>
+	<p id = 'redBets'>{{Red Bets}}</p>
+	<p id = 'greenBets'>{{Green Bets}}</p>
+	<p id = 'blackBets'>{{Black Bets}}</p>
 	
-	</div>
+	<div style='clear:both;'></div>
+
+	
+	<svg width="300" height="300">
+		<rect id = "colorTest" width="300" height="300" style="fill:rgb(0,0,0);">
+		Sorry, your browser does not support inline SVG.  
+	</svg>
+	</br></br>
+	
+	Time to bet:
+	<progress value='20' max='20' id='countDownBar'></progress>
+	<p id='countDown' style='display:inline'>{{countDown#}}</p>
+	
 </div>
 <div id = 'chat'>
 	<a> Test </a>
