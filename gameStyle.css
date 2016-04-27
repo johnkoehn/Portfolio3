@@ -11,7 +11,7 @@
 #red
 {
 	color: WHITE;
-	background-color: RED;
+	background-color: #e60000;
 	width: 20%;
 }
 #green
@@ -40,4 +40,33 @@
 {
 	width: 20%;
 	float: left;
+}
+#betButton
+{
+	width: 100px;
+	color: WHITE;
+	background-color: #e60000;
+}
+#chatbox 
+{
+    text-align:left;
+    margin:0 auto;
+	float: left;
+    margin-bottom:25px;
+    padding:10px;
+    background:#fff;
+    height:60%;
+    width:90%;
+    border:1px solid;
+    overflow:auto; 
+}
+#usermessage 
+{
+    width:75%;
+    border:1px solid; 
+
+}
+#submit
+{
+	width:15%;
 }
