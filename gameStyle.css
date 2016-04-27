@@ -1,0 +1,28 @@
+#not-chat
+{
+	width: 60%;
+	float: left;
+}
+#chat
+{
+	width: 40%;
+	float: right;
+}
+#red
+{
+	color: WHITE;
+	background-color: RED;
+	width: 20%;
+}
+#green
+{
+	color: WHITE;
+	background-color: GREEN;
+	width: 20%;
+}
+#black
+{
+	color: WHITE;
+	background-color: BLACK;
+	width: 20%;
+}
