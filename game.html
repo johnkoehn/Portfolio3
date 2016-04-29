@@ -1,6 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="gameStyle.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -8,10 +9,12 @@
 <div id = 'not-chat'>
 	<p>{{Name}} : {{Cash Money}}</p>
 	<p>Choose a color to bet on:</p>
+	<div id = 'buttons'>
 	<input type = 'button' id = 'red' value = '1:2'>
 	<input type = 'button' id = 'green' value = '1:14'>
 	<input type = 'button' id = 'black' value = '1:2'>
 	</br>
+	</div>
 	
 	<p id = 'redBets'>{{Red Bets}}</p>
 	<p id = 'greenBets'>{{Green Bets}}</p>
@@ -47,5 +50,21 @@
 </div>
 
 </body>
-
+<script>
+$('#red').click(function()
+{
+	var color = $(this).css('background-color');
+	$('#betButton').css('background-color', color);
+});
+$('#green').click(function()
+{
+	var color = $(this).css('background-color');
+	$('#betButton').css('background-color', color);
+});
+$('#black').click(function()
+{
+	var color = $(this).css('background-color');
+	$('#betButton').css('background-color', color);
+});
+</script>
 </html>
