@@ -78,10 +78,10 @@ $('#betButton').click(function()
 {
 	if(!cycler.going)
 	{
-		cycler.interval = window.setInterval(changeColor, 100);
 		cycler.counter = 0;
+		cycler.interval = window.setInterval(changeColor, cycler.counter);
 		cycler.winner = Math.floor(Math.random() * 15) + 1;
-		cycler.numCycles = cycler.winner + 30;
+		cycler.numCycles = cycler.winner + 40;
 		cycler.going = true;
 	}
 	
@@ -120,6 +120,8 @@ function changeColor()
 		console.log('error');
 	}
 	++cycler.counter;
+	clearInterval(cycler.interval);
+	cycler.interval = window.setInterval(changeColor, (cycler.counter * 10));
 }
 </script>
 </html>
