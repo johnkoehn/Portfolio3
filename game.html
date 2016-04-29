@@ -24,7 +24,7 @@
 
 	
 	<svg width="300" height="300">
-		<rect id = "colorTest" width="300" height="300" style="fill:rgb(0,0,0);">
+		<rect id = "colorTest" width="300" height="300" style="fill:#e60000;">
 		Sorry, your browser does not support inline SVG.  
 	</svg>
 	</br></br>
@@ -51,6 +51,14 @@
 
 </body>
 <script>
+var cycler = {
+	going : false,
+	interval : 0,
+	counter : 0,
+	numCycles : 0,
+	winner : 0
+}
+
 $('#red').click(function()
 {
 	var color = $(this).css('background-color');
@@ -66,5 +74,52 @@ $('#black').click(function()
 	var color = $(this).css('background-color');
 	$('#betButton').css('background-color', color);
 });
+$('#betButton').click(function()
+{
+	if(!cycler.going)
+	{
+		cycler.interval = window.setInterval(changeColor, 100);
+		cycler.counter = 0;
+		cycler.winner = Math.floor(Math.random() * 15) + 1;
+		cycler.numCycles = cycler.winner + 30;
+		cycler.going = true;
+	}
+	
+});
+function changeColor()
+{
+	//set winning color
+	if(cycler.counter == cycler.numCycles)
+	{
+		cycler.going = false;
+		clearInterval(cycler.interval);
+		if(cycler.winner < 8)
+			$('#colorTest').css('fill', '#E60000');
+		else if(cycler.winner == 15)
+			$('#colorTest').css('fill', 'GREEN');
+		else
+			$('#colorTest').css('fill', 'BLACK');
+		return;
+	}
+	
+	//general case, cycle for a while.
+	if($('#colorTest').css('fill') == 'rgb(230, 0, 0)')
+	{	
+		$('#colorTest').css('fill', 'GREEN');
+	}
+	else if($('#colorTest').css('fill') == 'rgb(0, 128, 0)')
+	{	
+		$('#colorTest').css('fill', 'BLACK');
+	}
+	else if($('#colorTest').css('fill') == 'rgb(0, 0, 0)')
+	{	
+		$('#colorTest').css('fill', '#e60000');
+	}
+	else
+	{
+		console.log('error');
+	}
+	++cycler.counter;
+}
 </script>
 </html>
