@@ -167,6 +167,10 @@ app.post('/login', function(req, res)
 
 io.on('connection', function(socket){
     console.log('user connected');
+    socket.on('message', function(message)
+    {
+        io.sockets.emit('new_message', message);
+    });
 });
 
 http.listen(3001, function () {

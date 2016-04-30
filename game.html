@@ -3,6 +3,7 @@
 <link rel="stylesheet" type="text/css" href="gameStyle.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://localhost:3001/socket.io/socket.io.js"></script>
+<title>Bet Game</title>
 </head>
 
 <body>
@@ -55,6 +56,8 @@
 var socket = io.connect('http://localhost:3001');
 var name;
 var points;
+var messages = [];
+
 $.get("http://localhost:3001/name", function(data)
 {
     name = data;
@@ -72,7 +75,26 @@ $(document).ready(function()
 
 });
 
+//MESSAGE STUFF
 
+$('#submit').click(function()
+{
+    //send the chat information to socket
+    socket.emit('message', name + ":" +  $('#usermessage').val());
+});
+
+socket.on('new_message', function(data)
+{
+    messages.push(data);
+    var html = '';
+    for(i in messages)
+    {
+        html += messages[i] + '<br />';
+    }
+
+    //put the html into chatbox
+    $('#chatbox').html(html);
+});
 
 var cycler = {
 	going : false,
