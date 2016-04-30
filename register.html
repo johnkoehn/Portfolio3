@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign into BetGame or Register!</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var username,pass;
+            $("#submit").click(function(){
+                username=$("#username").val();
+                pass=$("#password").val();
+                pass2=$("#password_2").val();
+
+                /*
+                 * Perform some validation here.
+                 */
+                $.post("http://localhost:3001/register",{username:username,password:pass,password2:pass2},function(data)
+                {
+                    $("#message").html(data);
+                });
+            });
+
+            $("#login").on("click", function()
+            {
+               window.location.href="/login";
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Register for BetGame!</h1>
+<div id="message"></div>
+<div id="form">
+<input type="text" size="40" placeholder="Enter a new username" id="username"><br />
+<input type="password" size="40" placeholder="Enter your desired password" id="password"><br />
+<input type="password" size="40" placeholder="Reneter your desired password" id="password_2"><br />
+<input type="button" value="Submit" id="submit">
+<input type="button" value="Have an account? Login" id="login">
+</div>
+</body>
+</html>

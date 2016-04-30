@@ -19,15 +19,26 @@
                     {
                         window.location.href="/game";
                     }
+                    else
+                    {
+                        $("#message").html("Wrong username or password!");
+                    }
                 });
+            });
+
+            $("#register").click(function()
+            {
+                window.location.href="/register"
             });
         });
     </script>
 </head>
 <body>
 <h1>Sign into BetGame or register!!</h1>
+<div id="message"></div>
 <input type="text" size="40" placeholder="Type your username" id="username"><br />
 <input type="password" size="40" placeholder="Type your password" id="password"><br />
 <input type="button" value="Submit" id="submit">
+<input type="button" value="register" id="register">
 </body>
 </html>
