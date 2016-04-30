@@ -27,7 +27,7 @@ var activeUsers = [];
 app.get('/', function (req, res)
 {
     sess = req.session;
-    
+
     //check to see if the user is logged in already
     if(sess.loggedIn)
     {
@@ -59,6 +59,17 @@ app.get('/register', function(req, res)
     res.render('register.html');
 });
 
+app.get('/name', function(req, res)
+{
+    res.end(req.session.username);
+});
+
+app.get('/points', function(req, res)
+{
+    //console.log(req.session.points);
+    res.end(req.session.points);
+});
+
 app.get('/login', function(req, res)
 {
     res.render('login.html');
@@ -88,7 +99,7 @@ app.post('/register', function(req, res)
         if(unique_username)
         {
             //write the data to file
-            var string;
+            var string = '';
             for(i in array)
             {
                 string +=array[i] + ",";
@@ -119,12 +130,22 @@ app.post('/login', function(req, res)
         if((i % 3) == 0 && req.body.username == array[i])
         {
             pass = 1;
-            username = req.body.username;
+            req.session.username = req.body.username;
         }
         else if(pass == 1 && req.body.password == array[i])
         {
             //set session to active
             sess.loggedIn = true;
+            pass = 2;
+
+
+
+        }
+        else if(pass == 2)
+        {
+            //get the number of points the user has
+            req.session.points = array[i];
+            console.log(array[i]);
             break;
         }
         else

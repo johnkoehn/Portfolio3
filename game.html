@@ -2,12 +2,13 @@
 <head>
 <link rel="stylesheet" type="text/css" href="gameStyle.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://localhost:3001/socket.io/socket.io.js"></script>
 </head>
 
 <body>
 
 <div id = 'not-chat'>
-	<p>{{Name}} : {{Cash Money}}</p>
+	<p> <span id="name"> {{Name}}</span> : <span id="points">{{Cash Money}} </span></p>
 	<p>Choose a color to bet on:</p>
 	<div id = 'buttons'>
 	<input type = 'button' id = 'red' value = '1:2'>
@@ -51,6 +52,28 @@
 
 </body>
 <script>
+var socket = io.connect('http://localhost:3001');
+var name;
+var points;
+$.get("http://localhost:3001/name", function(data)
+{
+    name = data;
+    $("#name").html(name);
+});
+
+$.get("http://localhost:3001/points", function(data)
+{
+    points = data;
+    $("#points").html(points + " points");
+});
+
+$(document).ready(function()
+{
+
+});
+
+
+
 var cycler = {
 	going : false,
 	interval : 0,
