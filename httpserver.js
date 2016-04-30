@@ -31,4 +31,4 @@ server.on('request', function (req,res) {
 
 }); // end server on handler
 
-server.listen(63342);
+server.listen(3001);

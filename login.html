@@ -2,9 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Sign into BetGame or Register!</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var username,pass;
+            $("#submit").click(function(){
+                username=$("#username").val();
+                pass=$("#password").val();
+
+                /*
+                 * Perform some validation here.
+                 */
+                $.post("http://localhost:3001/login",{username:username,password:pass},function(data){
+                    if(data==='success')
+                    {
+                        window.location.href="/game";
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-
+<h1>Sign into BetGame or register!!</h1>
+<input type="text" size="40" placeholder="Type your username" id="username"><br />
+<input type="password" size="40" placeholder="Type your password" id="password"><br />
+<input type="button" value="Submit" id="submit">
 </body>
 </html>
