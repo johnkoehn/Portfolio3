@@ -5,7 +5,7 @@
 var express = require('express');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-
+var cookieParser = require('cookie-parser');
 
 var app = express();
 var http = require('http').Server(app);
@@ -15,6 +15,7 @@ app.set('views', __dirname);
 app.use(express.static(__dirname));
 app.engine('html', require('ejs').renderFile);
 
+app.use(cookieParser());
 app.use(session({secret: 'ssshhhhh'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -26,7 +27,7 @@ var activeUsers = [];
 app.get('/', function (req, res)
 {
     sess = req.session;
-
+    
     //check to see if the user is logged in already
     if(sess.loggedIn)
     {
