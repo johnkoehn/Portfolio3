@@ -35,10 +35,12 @@
 	<progress value='20' max='20' id='countDownBar'></progress>
 	<p id='countDown' style='display:inline'>{{countDown#}}</p>
 	</br></br>
-	
+
+    <div id="message"></div>
+
 	Bet Amount:
-	<input type='text' value='0' id='bet'>
-	<input type='button' value='Bet' id='betButton'>
+	<input type='number' value='0' id='bet'>
+	<input type='button' value='Bet' id='betButton' style="background-color:#e60000">
 	
 </div>
 <div id = 'chat'>
@@ -96,6 +98,9 @@ socket.on('new_message', function(data)
     $('#chatbox').html(html);
 });
 
+//BETTING
+var color_selected = 'red';
+
 var cycler = {
 	going : false,
 	interval : 0,
@@ -107,30 +112,61 @@ var cycler = {
 $('#red').click(function()
 {
 	var color = $(this).css('background-color');
+    color_selected = 'red';
 	$('#betButton').css('background-color', color);
 });
 $('#green').click(function()
 {
 	var color = $(this).css('background-color');
+    color_selected = 'green';
 	$('#betButton').css('background-color', color);
 });
 $('#black').click(function()
 {
 	var color = $(this).css('background-color');
+    color_selected = 'black';
 	$('#betButton').css('background-color', color);
 });
+
+
 $('#betButton').click(function()
 {
 	if(!cycler.going)
 	{
-		cycler.counter = 0;
+		/*cycler.counter = 0;
 		cycler.interval = window.setInterval(changeColor, cycler.counter);
 		cycler.winner = Math.floor(Math.random() * 15) + 1;
 		cycler.numCycles = cycler.winner + 40;
-		cycler.going = true;
+		cycler.going = true;*/
+        var pointsToBet = $("#bet").val();
+        //check to make sure the user has enough points to bet
+        if((points - pointsToBet) >= 0)
+        {
+            //send a message to the server to let them know about the user bet
+            socket.emit('bet', color_selected, pointsToBet);
+
+            //subtract the points
+            points -= pointsToBet;
+            $("#points").html(points + " points");
+        }
+        else
+        {
+            $('#message').html("Invalid number of points!!");
+        }
+
+
 	}
 	
 });
+
+socket.on('bets', function(redPoints, greenPoints, blackPoints)
+{
+    console.log(redPoints);
+    $("#redBets").html(redPoints);
+    $("#greenBets").html(greenPoints);
+    $("#blackBets").html(blackPoints);
+});
+
 function changeColor()
 {
 	//set winning color

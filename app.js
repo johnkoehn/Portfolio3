@@ -24,6 +24,11 @@ var sess;
 var name;
 var activeUsers = [];
 
+//betting information
+var redPoints = 0;
+var greenPoints = 0;
+var blackPoints = 0;
+
 app.get('/', function (req, res)
 {
     sess = req.session;
@@ -167,9 +172,34 @@ app.post('/login', function(req, res)
 
 io.on('connection', function(socket){
     console.log('user connected');
+
     socket.on('message', function(message)
     {
         io.sockets.emit('new_message', message);
+    });
+
+    socket.on('bet', function(color_selected, points_bet)
+    {
+        points_bet = parseInt(points_bet);
+        if(color_selected == "red")
+        {
+            redPoints += points_bet;
+        }
+        else if(color_selected == "green")
+        {
+            greenPoints += points_bet;
+        }
+        else if(color_selected == "black")
+        {
+            blackPoints += points_bet;
+        }
+        else
+        {
+            console.log("Invalid color bet!!!");
+        }
+
+        //send the updated color data to all the clients
+        io.sockets.emit('bets', redPoints, greenPoints, blackPoints)
     });
 });
 
