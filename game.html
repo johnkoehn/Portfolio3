@@ -72,6 +72,14 @@ $.get("http://localhost:3001/points", function(data)
     $("#points").html(points + " points");
 });
 
+$.get("http://localhost:3001/bets", function(data)
+{
+    console.log("test");
+    $("#redBets").html(data["redPoints"]);
+    $("#greenBets").html(data["greenPoints"]);
+    $("#blackBets").html(data["blackPoints"]);
+});
+
 $(document).ready(function()
 {
 

@@ -80,6 +80,11 @@ app.get('/login', function(req, res)
     res.render('login.html');
 });
 
+app.get('/bets', function(req, res)
+{
+    res.send({redPoints: redPoints, greenPoints: greenPoints, blackPoints: blackPoints});
+});
+
 app.post('/register', function(req, res)
 {
     sess = req.session;
