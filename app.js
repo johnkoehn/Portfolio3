@@ -204,9 +204,47 @@ io.on('connection', function(socket){
         }
 
         //send the updated color data to all the clients
-        io.sockets.emit('bets', redPoints, greenPoints, blackPoints)
+        io.sockets.emit('bets', redPoints, greenPoints, blackPoints);
     });
 });
+
+//this functions decides the winning color, sends the information to the clients
+//and then after a set period, allows betting again
+function betDecider(callback)
+{
+    var winningColor = Math.floor(Math.random() * 15) + 1;
+    var numOfCycles = winningColor + 30;
+
+    //calculate approximate time to wait
+    var time = 0;
+    for(var i = 1; i <= numOfCycles; i++)
+    {
+        time += i * 10;
+    }
+
+    //send out the information to all clients
+    io.sockets.emit('cycle', winningColor, numOfCycles);
+
+    //wait for clients to finish cycling and then restart betting
+    setTimeout(function()
+    {
+        io.sockets.emit('reset');
+        redPoints = 0;
+        greenPoints = 0;
+        blackPoints = 0;
+    }, time + 100);
+
+    callback();
+}
+
+(function schedule() {
+    setTimeout(function () {
+        betDecider(function() {
+            console.log("completed bet");
+            schedule();
+        });
+    }, 25000);
+}());
 
 http.listen(3001, function () {
     console.log('Server listening on port 3001!');

@@ -60,6 +60,10 @@ var name;
 var points;
 var messages = [];
 
+var redPointsBet = 0;
+var greenPointsBet = 0;
+var blackPointsBet = 0;
+
 $.get("http://localhost:3001/name", function(data)
 {
     name = data;
@@ -146,7 +150,7 @@ $('#betButton').click(function()
 		cycler.winner = Math.floor(Math.random() * 15) + 1;
 		cycler.numCycles = cycler.winner + 40;
 		cycler.going = true;*/
-        var pointsToBet = $("#bet").val();
+        var pointsToBet = parseInt($("#bet").val());
         //check to make sure the user has enough points to bet
         if((points - pointsToBet) >= 0)
         {
@@ -156,6 +160,14 @@ $('#betButton').click(function()
             //subtract the points
             points -= pointsToBet;
             $("#points").html(points + " points");
+            $('#message').html('');
+
+            if(color_selected == 'red')
+                    redPointsBet += pointsToBet;
+            else if(color_selected == 'green')
+                    greenPointsBet += pointsToBet;
+            else if(color_selected == 'black')
+                    blackPointsBet += pointsToBet;
         }
         else
         {
@@ -164,7 +176,19 @@ $('#betButton').click(function()
 
 
 	}
+    else
+    {
+        $('#message').html('Wait till the next round to bet!');
+    }
 	
+});
+
+socket.on('cycle', function(winningColor, numOfCycles)
+{
+    cycler.interval = window.setInterval(changeColor, cycler.counter);
+    cycler.winner = winningColor;
+    cycler.numCycles = numOfCycles;
+    cycler.going = true;
 });
 
 socket.on('bets', function(redPoints, greenPoints, blackPoints)
@@ -175,12 +199,34 @@ socket.on('bets', function(redPoints, greenPoints, blackPoints)
     $("#blackBets").html(blackPoints);
 });
 
+socket.on('reset', function()
+{
+    console.log(redPointsBet + " " + greenPointsBet + " " + " " + blackPointsBet)
+    //add points if user won round
+    if(cycler.winner < 8)
+        points += redPointsBet * 2;
+    else if(cycler.winner == 15)
+        points += greenPointsBet * 15;
+    else
+        points += blackPointsBet * 2;
+
+    cycler.going = false;
+    redPointsBet = 0;
+    greenPointsBet = 0;
+    blackPointsBet = 0;
+    $("#redBets").html("0");
+    $("#greenBets").html("0");
+    $("#blackBets").html("0");
+    $("#points").html(points + " points");
+    $('#message').html('');
+});
+
 function changeColor()
 {
 	//set winning color
 	if(cycler.counter == cycler.numCycles)
 	{
-		cycler.going = false;
+        cycler.counter = 0;
 		clearInterval(cycler.interval);
 		if(cycler.winner < 8)
 			$('#colorTest').css('fill', '#E60000');
