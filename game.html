@@ -64,6 +64,8 @@ var redPointsBet = 0;
 var greenPointsBet = 0;
 var blackPointsBet = 0;
 
+var colorCyclerWorker;
+
 $.get("http://localhost:3001/name", function(data)
 {
     name = data;
@@ -72,7 +74,7 @@ $.get("http://localhost:3001/name", function(data)
 
 $.get("http://localhost:3001/points", function(data)
 {
-    points = data;
+    points = parseInt(data);
     $("#points").html(points + " points");
 });
 
@@ -115,7 +117,6 @@ var color_selected = 'red';
 
 var cycler = {
 	going : false,
-	interval : 0,
 	counter : 0,
 	numCycles : 0,
 	winner : 0
@@ -185,7 +186,7 @@ $('#betButton').click(function()
 
 socket.on('cycle', function(winningColor, numOfCycles)
 {
-    cycler.interval = window.setInterval(changeColor, cycler.counter);
+    //start a worker
     cycler.winner = winningColor;
     cycler.numCycles = numOfCycles;
     cycler.going = true;
@@ -199,18 +200,20 @@ socket.on('bets', function(redPoints, greenPoints, blackPoints)
     $("#blackBets").html(blackPoints);
 });
 
-socket.on('reset', function()
+socket.on('reset', function(color)
 {
     console.log(redPointsBet + " " + greenPointsBet + " " + " " + blackPointsBet)
     //add points if user won round
-    if(cycler.winner < 8)
-        points += redPointsBet * 2;
-    else if(cycler.winner == 15)
+    if(color == 'Red')
+        points += parseInt(redPointsBet * 2);
+    else if(color == 'Green')
         points += greenPointsBet * 15;
     else
         points += blackPointsBet * 2;
 
     cycler.going = false;
+    cycler.interval = 0;
+    cycler.counter = 0;
     redPointsBet = 0;
     greenPointsBet = 0;
     blackPointsBet = 0;
@@ -221,32 +224,19 @@ socket.on('reset', function()
     $('#message').html('');
 });
 
-function changeColor()
+socket.on('changeColor', function(color)
 {
-	//set winning color
-	if(cycler.counter == cycler.numCycles)
-	{
-        cycler.counter = 0;
-		clearInterval(cycler.interval);
-		if(cycler.winner < 8)
-			$('#colorTest').css('fill', '#E60000');
-		else if(cycler.winner == 15)
-			$('#colorTest').css('fill', 'GREEN');
-		else
-			$('#colorTest').css('fill', 'BLACK');
-		return;
-	}
 	
 	//general case, cycle for a while.
-	if($('#colorTest').css('fill') == 'rgb(230, 0, 0)')
+	if(color == 'Green')
 	{	
 		$('#colorTest').css('fill', 'GREEN');
 	}
-	else if($('#colorTest').css('fill') == 'rgb(0, 128, 0)')
+	else if(color == 'Black')
 	{	
 		$('#colorTest').css('fill', 'BLACK');
 	}
-	else if($('#colorTest').css('fill') == 'rgb(0, 0, 0)')
+	else if(color == 'Red')
 	{	
 		$('#colorTest').css('fill', '#e60000');
 	}
@@ -254,9 +244,6 @@ function changeColor()
 	{
 		console.log('error');
 	}
-	++cycler.counter;
-	clearInterval(cycler.interval);
-	cycler.interval = window.setInterval(changeColor, (cycler.counter * 10));
-}
+});
 </script>
 </html>

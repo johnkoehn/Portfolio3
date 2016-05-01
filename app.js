@@ -29,6 +29,9 @@ var redPoints = 0;
 var greenPoints = 0;
 var blackPoints = 0;
 
+var currentColor = 'red';
+var timesSinceGreen = 0;
+
 app.get('/', function (req, res)
 {
     sess = req.session;
@@ -215,24 +218,32 @@ function betDecider(callback)
     var winningColor = Math.floor(Math.random() * 15) + 1;
     var numOfCycles = winningColor + 30;
 
-    //calculate approximate time to wait
-    var time = 0;
-    for(var i = 1; i <= numOfCycles; i++)
-    {
-        time += i * 10;
-    }
-
     //send out the information to all clients
     io.sockets.emit('cycle', winningColor, numOfCycles);
 
-    //wait for clients to finish cycling and then restart betting
-    setTimeout(function()
+    //calculate approximate time to wait and then tell the client when to change color
+    var time = 0;
+    for(var i = 1; i <= numOfCycles; i++)
     {
-        io.sockets.emit('reset');
-        redPoints = 0;
-        greenPoints = 0;
-        blackPoints = 0;
-    }, time + 100);
+        if(timesSinceGreen == 15)
+            currentColor = 'Green';
+        else if(currentColor == 'Red' || currentColor == 'Green')
+            currentColor = 'Black';
+        else
+            currentColor = 'Red';
+
+        time = i * 10;
+        setTimeout(function()
+        {
+            console.log("hi")
+            io.sockets.emit('changeColor', currentColor);
+        }, time);
+        timesSinceGreen += 1;
+    }
+    io.sockets.emit('reset', currentColor);
+    redPoints = 0;
+    greenPoints = 0;
+    blackPoints = 0;
 
     callback();
 }
@@ -243,7 +254,7 @@ function betDecider(callback)
             console.log("completed bet");
             schedule();
         });
-    }, 25000);
+    }, 10000);
 }());
 
 http.listen(3001, function () {
