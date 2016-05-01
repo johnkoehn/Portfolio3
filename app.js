@@ -31,6 +31,8 @@ var blackPoints = 0;
 
 var currentColor = 'red';
 var timesSinceGreen = 0;
+var tickTime = 0;
+var betting = false;
 
 app.get('/', function (req, res)
 {
@@ -70,6 +72,16 @@ app.get('/register', function(req, res)
 app.get('/name', function(req, res)
 {
     res.end(req.session.username);
+});
+
+app.get('/time', function(req, res)
+{
+    res.sendStatus(tickTime);
+});
+
+app.get('/color', function(req, res)
+{
+    res.send(currentColor);
 });
 
 app.get('/points', function(req, res)
@@ -215,46 +227,72 @@ io.on('connection', function(socket){
 //and then after a set period, allows betting again
 function betDecider(callback)
 {
-    var winningColor = Math.floor(Math.random() * 15) + 1;
-    var numOfCycles = winningColor + 30;
-
-    //send out the information to all clients
-    io.sockets.emit('cycle', winningColor, numOfCycles);
-
-    //calculate approximate time to wait and then tell the client when to change color
-    var time = 0;
-    for(var i = 1; i <= numOfCycles; i++)
+    if(!betting && tickTime == 20)
     {
-        if(timesSinceGreen == 15)
-            currentColor = 'Green';
-        else if(currentColor == 'Red' || currentColor == 'Green')
-            currentColor = 'Black';
-        else
-            currentColor = 'Red';
+        tickTime = 0;
+        console.log("Started Cycle");
+        betting = true;
+        var time = 0;
+        var winningColor = Math.floor(Math.random() * 15) + 1;
+        var numOfCycles = winningColor + 30;
 
-        time = i * 10;
-        setTimeout(function()
+        //send out the information to all clients
+        io.sockets.emit('cycle', winningColor, numOfCycles);
+
+        //calculate approximate time to wait and then tell the client when to change color
+        time = 0;
+        for(var i = 1; i <= numOfCycles; i++)
         {
-            console.log("hi")
-            io.sockets.emit('changeColor', currentColor);
-        }, time);
-        timesSinceGreen += 1;
+            if(timesSinceGreen == 15)
+            {
+                currentColor = 'Green';
+                timesSinceGreen = 0;
+            }
+            else if(currentColor == 'Red' || currentColor == 'Green')
+                currentColor = 'Black';
+            else
+                currentColor = 'Red';
+
+            time += i * 10;
+            if(i != numOfCycles)
+                setTimeout(colorChange.bind(undefined, currentColor, false), (time));
+            else
+                setTimeout(colorChange.bind(undefined, currentColor, true), (time));
+
+            timesSinceGreen += 1;
+        }
+        redPoints = 0;
+        greenPoints = 0;
+        blackPoints = 0;
     }
-    io.sockets.emit('reset', currentColor);
-    redPoints = 0;
-    greenPoints = 0;
-    blackPoints = 0;
+    else if(!betting)
+    {
+        tickTime += 1;
+        console.log(tickTime);
+        io.sockets.emit('progressBar', 20 - tickTime);
+    }
+
 
     callback();
+}
+
+function colorChange(newColor, sendReset)
+{
+    io.sockets.emit('changeColor', newColor);
+
+    if(sendReset)
+    {
+        io.sockets.emit('reset', newColor);
+        betting = false;
+    }
 }
 
 (function schedule() {
     setTimeout(function () {
         betDecider(function() {
-            console.log("completed bet");
             schedule();
         });
-    }, 10000);
+    }, 1000);
 }());
 
 http.listen(3001, function () {

@@ -86,8 +86,31 @@ $.get("http://localhost:3001/bets", function(data)
     $("#blackBets").html(data["blackPoints"]);
 });
 
-$(document).ready(function()
+$.get("http://localhost:3001/time", function(data)
 {
+    var time = parseInt(data);
+    document.getElementById("countDownBar").value = time;
+    $('#countDown').html(time);
+});
+
+$.get("http://localhost:3001/color", function(data)
+{
+    if(data == 'Green')
+    {
+        $('#colorTest').css('fill', 'GREEN');
+    }
+    else if(data == 'Black')
+    {
+        $('#colorTest').css('fill', 'BLACK');
+    }
+    else if(data == 'Red')
+    {
+        $('#colorTest').css('fill', '#e60000');
+    }
+    else
+    {
+        console.log('error');
+    }
 
 });
 
@@ -222,11 +245,13 @@ socket.on('reset', function(color)
     $("#blackBets").html("0");
     $("#points").html(points + " points");
     $('#message').html('');
+    document.getElementById("countDownBar").value = 20;
 });
 
 socket.on('changeColor', function(color)
 {
-	
+    cycler.going = true;
+
 	//general case, cycle for a while.
 	if(color == 'Green')
 	{	
@@ -244,6 +269,13 @@ socket.on('changeColor', function(color)
 	{
 		console.log('error');
 	}
+});
+
+socket.on('progressBar', function(time)
+{
+    console.log(time);
+    document.getElementById("countDownBar").value = time;
+    $('#countDown').html(time);
 });
 </script>
 </html>
