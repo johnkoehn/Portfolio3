@@ -149,6 +149,12 @@ app.post('/register', function(req, res)
     }
 });
 
+app.get('/logout', function(req, res)
+{
+    req.session = null;
+    res.redirect('login.html');
+});
+
 app.post('/login', function(req, res)
 {
     sess = req.session;

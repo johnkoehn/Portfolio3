@@ -41,6 +41,7 @@
 	Bet Amount:
 	<input type='number' value='0' id='bet'>
 	<input type='button' value='Bet' id='betButton' style="background-color:#e60000">
+    <br />
 	
 </div>
 <div id = 'chat'>
@@ -278,6 +279,15 @@ window.onbeforeunload = function()
     });
     socket.emit('updatePoints', name, points);
 }
+
+/*$("#logout").click(function()
+{
+
+    socket.emit('updatePoints', name, points);
+    $.get("http://localhost:3001/logout",function(data)
+    {
+    });
+});*/
 
 socket.on('progressBar', function(time)
 {
