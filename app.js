@@ -86,8 +86,11 @@ app.get('/color', function(req, res)
 
 app.get('/points', function(req, res)
 {
-    //console.log(req.session.points);
-    res.end(req.session.points);
+    var fs = require('fs');
+    var array = fs.readFileSync('users.txt').toString().split(",");
+
+    var index = array.indexOf(req.session.username);
+    res.send(array[index+2]);
 });
 
 app.get('/login', function(req, res)
@@ -98,6 +101,12 @@ app.get('/login', function(req, res)
 app.get('/bets', function(req, res)
 {
     res.send({redPoints: redPoints, greenPoints: greenPoints, blackPoints: blackPoints});
+});
+
+app.post('/session', function(req, res)
+{
+    req.session.points = req.body.points;
+    console.log(req.session.points);
 });
 
 app.post('/register', function(req, res)
@@ -221,6 +230,33 @@ io.on('connection', function(socket){
         //send the updated color data to all the clients
         io.sockets.emit('bets', redPoints, greenPoints, blackPoints);
     });
+
+    socket.on('updatePoints', function(name, points)
+    {
+        //find the name in users and then update the number of points
+        //go through the file, and check usernames
+        console.log(points);
+        var fs = require('fs');
+        var array = fs.readFileSync('users.txt').toString().split(",");
+
+        var index = array.indexOf(name);
+        array[index + 2] = points;
+        console.log(array[index + 2]);
+
+        var string = '';
+        for(var i = 0; i < array.length; i++)
+        {
+            if((i+1) != array.length)
+            {
+                string +=array[i] + ",";
+            }
+            else
+            {
+                string +=array[i];
+            }
+        }
+        fs.writeFileSync("users.txt", string, 'utf8');
+    });
 });
 
 //this functions decides the winning color, sends the information to the clients
@@ -268,7 +304,7 @@ function betDecider(callback)
     else if(!betting)
     {
         tickTime += 1;
-        console.log(tickTime);
+       // console.log(tickTime);
         io.sockets.emit('progressBar', 20 - tickTime);
     }
 

@@ -271,6 +271,14 @@ socket.on('changeColor', function(color)
 	}
 });
 
+window.onbeforeunload = function()
+{
+    $.post("http://localhost:3001/session",{points:points},function(data)
+    {
+    });
+    socket.emit('updatePoints', name, points);
+}
+
 socket.on('progressBar', function(time)
 {
     console.log(time);
